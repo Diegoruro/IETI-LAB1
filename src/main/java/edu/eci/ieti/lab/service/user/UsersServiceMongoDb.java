@@ -3,6 +3,7 @@ package edu.eci.ieti.lab.service.user;
 import edu.eci.ieti.lab.model.user.User;
 import edu.eci.ieti.lab.model.user.UserDto;
 import edu.eci.ieti.lab.repository.user.UserMongoRepository;
+import edu.eci.ieti.lab.security.encrypt.PasswordEncryptionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,16 +14,17 @@ import java.util.Optional;
 public class UsersServiceMongoDb implements UsersService {
 
     private final UserMongoRepository userMongoRepository;
+    private final PasswordEncryptionService passwordEncryptionService;
 
     @Autowired
-    public UsersServiceMongoDb(UserMongoRepository userMongoRepository) {
+    public UsersServiceMongoDb(UserMongoRepository userMongoRepository, PasswordEncryptionService passwordEncryptionService) {
         this.userMongoRepository = userMongoRepository;
+        this.passwordEncryptionService = passwordEncryptionService;
     }
 
     @Override
-    public User save(User user) {
-        userMongoRepository.save(user);
-        return user;
+    public User save(UserDto user) {
+        return userMongoRepository.save(new User(user,passwordEncryptionService.encrypt(user.getPassword())));
     }
 
     @Override
@@ -44,6 +46,11 @@ public class UsersServiceMongoDb implements UsersService {
     @Override
     public void deleteById(String id) {
         userMongoRepository.deleteById(id);
+    }
+
+    @Override
+    public Optional<User> findByEmail(String email) {
+        return Optional.empty();
     }
 
     @Override

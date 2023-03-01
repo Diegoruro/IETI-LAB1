@@ -23,9 +23,10 @@ public class UsersController {
     }
 
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody User user) {
-        URI createdUserUri = URI.create("");
-        return ResponseEntity.created(createdUserUri).body(usersService.save(user));
+    public ResponseEntity<User> createUser(@RequestBody UserDto userDto) {
+        User savedUser = usersService.save(userDto);
+        URI createdUserUri = URI.create("/v1/users/" + savedUser.getId());
+        return ResponseEntity.created(createdUserUri).body(savedUser);
     }
 
     @GetMapping
@@ -48,7 +49,6 @@ public class UsersController {
     public ResponseEntity<User> updateUser(@PathVariable("id") String id, @RequestBody UserDto user) {
         Optional<User> userResponse = usersService.findById(id);
         if (userResponse.isPresent()){
-            usersService.save(userResponse.get());
             User userUpdated = usersService.update(user,id);
             return ResponseEntity.ok(userUpdated);
         }else {
@@ -60,7 +60,6 @@ public class UsersController {
     public ResponseEntity<Void> deleteUser(@PathVariable("id") String id){
         Optional<User> userResponse = usersService.findById(id);
         if (userResponse.isPresent()){
-            usersService.save(userResponse.get());
             usersService.deleteById(id);
             return ResponseEntity.ok().build();
         }else {

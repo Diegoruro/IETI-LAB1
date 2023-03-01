@@ -98,7 +98,7 @@ public class UsersControllerTest {
                         .content(json))
                 .andExpect(status().isOk());
 
-        verify(usersService, times(1)).save(user);
+        verify(usersService, times(1)).save(userDto);
     }
 
     @Test

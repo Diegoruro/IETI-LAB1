@@ -5,6 +5,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Objects;
 
@@ -23,6 +25,14 @@ public class User implements Serializable {
 
     public User() {
 
+    }
+    public User(UserDto userDto, String passwordHash) {
+        this.id = null;
+        this.name = userDto.getName();
+        this.lastName = userDto.getLastName();
+        this.email = userDto.getEmail();
+        this.passwordHash = passwordHash;
+        this.createdAt = new Date();
     }
 
     public User(String id, String name, String lastName, String email, String password) {
@@ -112,5 +122,10 @@ public class User implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(id, name, lastName, email, passwordHash, createdAt);
+    }
+
+
+    public String getPasswordHash() {
+        return passwordHash;
     }
 }
